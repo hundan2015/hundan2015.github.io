@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0e5ec9"],{"970e":function(e,n,t){"use strict";t.r(n);var c=function(){var e=this,n=e.$createElement;e._self._c;return e._m(0)},r=[function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("section",[t("h1",[e._v("第一篇博客！（remake）")]),t("p",[e._v("以后会在这里写一些见闻啥的。")]),t("p",[e._v("编程什么的也会写一点。")]),t("p",[t("s",[e._v("下回更新一定要支持markdown！")])]),t("p",[e._v("已经支持了（")])])}],s=t("5d22"),u={},a=Object(s["a"])(u,c,r,!1,null,null,null);n["default"]=a.exports}}]);
+//# sourceMappingURL=chunk-2d0e5ec9.48c2a876.js.map

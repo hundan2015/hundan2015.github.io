@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d213d19"],{adff:function(e,n,t){"use strict";t.r(n);var c=function(){var e=this,n=e.$createElement;e._self._c;return e._m(0)},r=[function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("section",[t("h1",[e._v("年也过完了。今年我也是加把劲骑士。")]),t("p",[e._v("你问我主要压力支撑位是啥？抱歉，现在实在是没有时间。如果真的感兴趣，可以在线下与我交流。")]),t("p",[e._v("那么，下次见。")])])}],u=t("5d22"),l={},s=Object(u["a"])(l,c,r,!1,null,null,null);n["default"]=s.exports}}]);
+//# sourceMappingURL=chunk-2d213d19.9fd41703.js.map
