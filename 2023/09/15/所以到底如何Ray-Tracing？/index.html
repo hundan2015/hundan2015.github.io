@@ -14,18 +14,24 @@
   
 
   
-  <title>黄鸭数据库</title>
+  <title>所以到底如何Ray Tracing？ | 黄鸭数据库</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="黄鸭数据库">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="写在前面Ray tracing算是渲染领域中很经典的话题了。这个算法突出的就是一个纯纯的暴力，但这也是目前最真实的算法。而且，即便暴力，为了实现更快的速度，无数的前辈们也是在用各种统计上的方法还有各种数学组合来使得运算变得更加快速。这从最初的Whitted Style到现在的Path Tracing，全都是各位前辈取得的成果。 问题就来了，为什么学做Ray tracing？Ray tracing作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="所以到底如何Ray Tracing？">
+<meta property="og:url" content="http://example.com/2023/09/15/%E6%89%80%E4%BB%A5%E5%88%B0%E5%BA%95%E5%A6%82%E4%BD%95Ray-Tracing%EF%BC%9F/index.html">
 <meta property="og:site_name" content="黄鸭数据库">
+<meta property="og:description" content="写在前面Ray tracing算是渲染领域中很经典的话题了。这个算法突出的就是一个纯纯的暴力，但这也是目前最真实的算法。而且，即便暴力，为了实现更快的速度，无数的前辈们也是在用各种统计上的方法还有各种数学组合来使得运算变得更加快速。这从最初的Whitted Style到现在的Path Tracing，全都是各位前辈取得的成果。 问题就来了，为什么学做Ray tracing？Ray tracing作">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-15T09:26:05.000Z">
+<meta property="article:modified_time" content="2023-09-15T09:59:58.368Z">
 <meta property="article:author" content="Symbolic">
+<meta property="article:tag" content="CG">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="黄鸭数据库" type="application/atom+xml">
@@ -49,14 +55,14 @@
   
   
     
-<div id="banner" class=" is_home ">
+<div id="banner" class="">
   <img src="/assets/banner.jpg" itemprop="image">
   <div id="banner-dim"></div>
 </div>
  
    
   <div id="main-grid" class="shadow   ">
-    <div id="nav" class=" is_home "  >
+    <div id="nav" class=""  >
       <navbar id="navbar">
   <nav id="title-nav">
     <a href="/">
@@ -236,10 +242,11 @@
 </sidebar>
     </div>
     <div id="content-body">
-      
-   
+       
 
 <article id="post-所以到底如何Ray-Tracing？" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
    
   <div class="article-inner">
     <div class="article-main">
@@ -249,8 +256,8 @@
   <div class="main-title-dot"></div>
   
     
-      <h1 itemprop="name">
-        <a class="p-name article-title" href="/2023/09/15/%E6%89%80%E4%BB%A5%E5%88%B0%E5%BA%95%E5%A6%82%E4%BD%95Ray-Tracing%EF%BC%9F/">所以到底如何Ray Tracing？</a>
+      <h1 class="p-name article-title" itemprop="headline name">
+        所以到底如何Ray Tracing？
       </h1>
     
   
@@ -278,12 +285,33 @@
       </header>
       <div class="e-content article-entry" itemprop="articleBody">
         
-          <div class="truncate-text">
-            写在前面Ray tracing算是渲染领域中很经典的话题了。这个算法突出的就是一个纯纯的暴力，但这也是目前最真实的算法。而且，即便暴力，为了实现更快的速度，无数的前辈们也是在用各种统计上的方法还有各种数学组合来使得运算变得更加快速。这从最初的Whitted Style到现在的Path Tracing，全都是各位前辈取得的成果。
-问题就来了，为什么学做Ray tracing？Ray tracing作为一个古老的算法，是基本符合人的认知的。也就是说，Ray tracing本身的思想并不复杂。在我自己学习的时候，我从RT的角度对很多光栅化里使用的方法有了更好的理解。简单来说，Ray tracing适合没有接触过图形学相关概念的新手。
-虽然如此，Ray tracing渲染器依然是一个复杂的工程。当需要大量的概念聚合起来的时候，便要考虑设计，考虑性能云云。而且现在没有一个很基础的API（比如OpenGL）来进行Ray tracing。即便是有，也是基本抽象过了头，对于理解RT本身并无好处。
-为了更好理解RT，这篇文章将会以RT中涉及到的概念进行讲解。其中会简单涉及到一些工程上的设计，我会尝...  
-          </div>
+          <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>Ray tracing算是渲染领域中很经典的话题了。这个算法突出的就是一个纯纯的暴力，但这也是目前最真实的算法。而且，即便暴力，为了实现更快的速度，无数的前辈们也是在用各种统计上的方法还有各种数学组合来使得运算变得更加快速。这从最初的Whitted Style到现在的Path Tracing，全都是各位前辈取得的成果。</p>
+<p>问题就来了，为什么学做Ray tracing？Ray tracing作为一个古老的算法，是基本符合人的认知的。也就是说，Ray tracing本身的思想并不复杂。在我自己学习的时候，我从RT的角度对很多光栅化里使用的方法有了更好的理解。<strong>简单来说，Ray tracing适合没有接触过图形学相关概念的新手。</strong></p>
+<p>虽然如此，Ray tracing渲染器依然是一个复杂的工程。当需要大量的概念聚合起来的时候，便要考虑设计，考虑性能云云。而且现在没有一个很基础的API（比如OpenGL）来进行Ray tracing。即便是有，也是基本抽象过了头，对于理解RT本身并无好处。</p>
+<p>为了更好理解RT，这篇文章将会以RT中涉及到的概念进行讲解。其中会简单涉及到一些工程上的设计，我会尝试说明这些设计的合理性。最后通过讲解，来明白Ray tracing的基础过程。</p>
+<p>顺便一提，如果有兴趣进行实践的话，请务必观看<a target="_blank" rel="noopener" href="https://raytracing.github.io/">RayTracing weekend</a>系列。</p>
+<!-- toc -->
+
+<ul>
+<li><a href="#-------">辐射度量学基础</a><ul>
+<li><a href="#radio-intensity">Radio Intensity</a></li>
+<li><a href="#radiance">Radiance</a></li>
+<li><a href="#irradiance">Irradiance</a></li>
+</ul>
+</li>
+<li><a href="#-----------">渲染方程与蒙特卡洛方法</a></li>
+<li><a href="#----------">从光线追踪到路径追踪</a></li>
+<li><a href="#----ray-hit-record--scatter">工程解：Ray、Hit record以及Scatter</a></li>
+<li><a href="#lambert----">Lambert光照模型</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2 id="辐射度量学基础"><a href="#辐射度量学基础" class="headerlink" title="辐射度量学基础"></a>辐射度量学基础</h2><p>在这一节中，我们将围绕着Radiance，Irradiance，Radio intansity这三个概念，介绍他们之间的关系。</p>
+<h3 id="Radio-Intensity"><a href="#Radio-Intensity" class="headerlink" title="Radio Intensity"></a>Radio Intensity</h3><h3 id="Radiance"><a href="#Radiance" class="headerlink" title="Radiance"></a>Radiance</h3><h3 id="Irradiance"><a href="#Irradiance" class="headerlink" title="Irradiance"></a>Irradiance</h3><h2 id="渲染方程与蒙特卡洛方法"><a href="#渲染方程与蒙特卡洛方法" class="headerlink" title="渲染方程与蒙特卡洛方法"></a>渲染方程与蒙特卡洛方法</h2><p>在这一节中，我们将介绍渲染方程的基本组成，并从计算的角度简单介绍蒙特卡罗方法。</p>
+<h2 id="从光线追踪到路径追踪"><a href="#从光线追踪到路径追踪" class="headerlink" title="从光线追踪到路径追踪"></a>从光线追踪到路径追踪</h2><p>在这一节中，我们将介绍基本的光线追踪方法，通过对计算量的了解，解释为什么要使用路径追踪。</p>
+<h2 id="工程解：Ray、Hit-record以及Scatter"><a href="#工程解：Ray、Hit-record以及Scatter" class="headerlink" title="工程解：Ray、Hit record以及Scatter"></a>工程解：Ray、Hit record以及Scatter</h2><p>在这一节中，我们将引入Ray tracing weekend中的Ray、Hit record以及Scatter这三个设计。并且将他们与光栅化中的部分概念进行比较，分析他们的思路。</p>
+<h2 id="Lambert光照模型"><a href="#Lambert光照模型" class="headerlink" title="Lambert光照模型"></a>Lambert光照模型</h2><p>在这一节中，我们将介绍Lambert光照模型，并分析其与渲染方程之间的关系。</p>
+
         
       </div>
 
@@ -291,185 +319,37 @@
     </div>
     
      
-    <a class="right-panel  non-pic  "
-      
-      href="/2023/09/15/%E6%89%80%E4%BB%A5%E5%88%B0%E5%BA%95%E5%A6%82%E4%BD%95Ray-Tracing%EF%BC%9F/" 
-    >
-       
-      <i class="fa-solid fa-angle-right non-pic"></i>
-       
-    </a>
-     
   </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2023/09/15/%E5%A6%82%E4%BD%95%E5%9C%A8Hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0Categories%E9%A1%B5%E9%9D%A2/"
+      title="如何在Hexo中添加Categories页面"
+     >
+
+    <p class="title-text">
+      
+        如何在Hexo中添加Categories页面
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
   
 </article>
 
  
-
-   
-
-<article id="post-如何在Hexo中添加Categories页面" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-   
-  <div class="article-inner">
-    <div class="article-main">
-      <header class="article-header">
-        
-<div class="main-title-bar">
-  <div class="main-title-dot"></div>
-  
-    
-      <h1 itemprop="name">
-        <a class="p-name article-title" href="/2023/09/15/%E5%A6%82%E4%BD%95%E5%9C%A8Hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0Categories%E9%A1%B5%E9%9D%A2/">如何在Hexo中添加Categories页面</a>
-      </h1>
-    
-  
-</div>
-
-        <div class='meta-info-bar'>
-          <div class="meta-info">
-  <time class="dt-published" datetime="2023-09-15T04:40:12.000Z" itemprop="datePublished">2023-09-15</time>
-</div>
-          <div class="need-seperator meta-info">
-            <div class="meta-cate-flex">
-  
-  <a class="meta-cate-link" href="/categories/%E5%8D%9A%E5%AE%A2%E7%BB%B4%E6%8A%A4%E4%B8%8E%E5%BC%80%E5%8F%91/">博客维护与开发</a>
-   
-</div>
-  
-          </div>
-          <div class="wordcount need-seperator meta-info">
-            316 词 
-          </div>
-        </div>
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%8A%80%E6%9C%AF/" rel="tag">网络技术</a></li></ul>
-
-      </header>
-      <div class="e-content article-entry" itemprop="articleBody">
-        
-          <div class="truncate-text">
-            
-
-
-如何获取类别数据
-
-
-
-起因是这样的。最近由于想要开始写一些东西，于是尝试使用了Hexo。其中有一个叫Vivia的主题深得我爱。我尝试按照网上的教程添加Categories页面，但是什么也没有。我看别人用Next是存在这样的页面的，因此我感到疑惑。
-所以说到底如何在Hexo中添加一个Categories页面呢？
-Hexo中有合适的Categories页面需要以下的条件。
-
-具有Categories的layout。
-layout定义了如何展示类别的ejs以及样式文件。
-
-这个方法是通用的。因此我将提供一个不包含样式的实现方式，给大家做参考。
-如何获取类别数据我们先不谈如何进行排版，因为那个是theme的事情。我们先聊一聊如何获得类别数据。
-通过对于文档的分析，我们可以通过直接应用页面的结构体，然后对每一个category进行遍历，并生成数据，就像下面的代码所示。
-1234567&lt;% site.categories.each( function(category)&#123; %&gt;    // site.categories是一个Array，里面包含所有catego...  
-          </div>
-        
-      </div>
-
-         
-    </div>
-    
-     
-    <a class="right-panel  non-pic  "
-      
-      href="/2023/09/15/%E5%A6%82%E4%BD%95%E5%9C%A8Hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0Categories%E9%A1%B5%E9%9D%A2/" 
-    >
-       
-      <i class="fa-solid fa-angle-right non-pic"></i>
-       
-    </a>
-     
-  </div>
-  
-</article>
-
- 
-
-   
-
-<article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-   
-  <div class="article-inner">
-    <div class="article-main">
-      <header class="article-header">
-        
-<div class="main-title-bar">
-  <div class="main-title-dot"></div>
-  
-    
-      <h1 itemprop="name">
-        <a class="p-name article-title" href="/2023/09/14/hello-world/">Hello World</a>
-      </h1>
-    
-  
-</div>
-
-        <div class='meta-info-bar'>
-          <div class="meta-info">
-  <time class="dt-published" datetime="2023-09-14T15:31:18.788Z" itemprop="datePublished">2023-09-14</time>
-</div>
-          <div class="need-seperator meta-info">
-            <div class="meta-cate-flex">
-  
-  <a class="meta-cate-link" href="/categories/%E6%97%A5%E5%B8%B8%E7%A2%8E%E7%A2%8E%E5%BF%B5/">日常碎碎念</a>
-   
-</div>
-  
-          </div>
-          <div class="wordcount need-seperator meta-info">
-            78 词 
-          </div>
-        </div>
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%8A%80%E6%9C%AF/" rel="tag">网络技术</a></li></ul>
-
-      </header>
-      <div class="e-content article-entry" itemprop="articleBody">
-        
-          <div class="truncate-text">
-            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;
-
-More info: Writing
-Run server1$ hexo server
-
-More info: Server
-Generate static files1$ hexo generate
-
-More info: Generating
-Deploy to remote sites1$ hexo deploy
-
-More info: Deployment
-  
-          </div>
-        
-      </div>
-
-         
-    </div>
-    
-     
-    <a class="right-panel  non-pic  "
-      
-      href="/2023/09/14/hello-world/" 
-    >
-       
-      <i class="fa-solid fa-angle-right non-pic"></i>
-       
-    </a>
-     
-  </div>
-  
-</article>
-
- 
-
-
-
     </div>
     <div id="footer-wrapper">
       <footer id="footer">
