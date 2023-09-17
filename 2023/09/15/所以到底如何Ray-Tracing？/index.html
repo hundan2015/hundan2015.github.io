@@ -28,7 +28,7 @@
 <meta property="og:description" content="写在前面Ray tracing算是渲染领域中很经典的话题了。这个算法突出的就是一个纯纯的暴力，但这也是目前最真实的算法。而且，即便暴力，为了实现更快的速度，无数的前辈们也是在用各种统计上的方法还有各种数学组合来使得运算变得更加快速。这从最初的Whitted Style到现在的Path Tracing，全都是各位前辈取得的成果。 问题就来了，为什么学做Ray tracing？Ray tracing作">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-15T09:26:05.000Z">
-<meta property="article:modified_time" content="2023-09-17T16:37:08.735Z">
+<meta property="article:modified_time" content="2023-09-17T17:17:37.738Z">
 <meta property="article:author" content="Symbolic">
 <meta property="article:tag" content="CG">
 <meta property="article:tag" content="C++">
@@ -291,7 +291,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            1k 词 
+            1.1k 词 
           </div>
         </div>
         
@@ -323,6 +323,7 @@
 <li><a href="#------lambert-----------">这比光栅化的Lambert模型简单多了，为什么？</a></li>
 </ul>
 </li>
+<li><a href="#----">参考文献</a></li>
 </ul>
 <!-- tocstop -->
 
@@ -331,7 +332,7 @@
 <h2 id="从光线追踪到路径追踪"><a href="#从光线追踪到路径追踪" class="headerlink" title="从光线追踪到路径追踪"></a>从光线追踪到路径追踪</h2><p>在这一节中，我们将介绍基本的光线追踪方法，通过对计算量的了解，解释为什么要使用路径追踪。</p>
 <h2 id="工程解：Ray、Hit-record以及Scatter"><a href="#工程解：Ray、Hit-record以及Scatter" class="headerlink" title="工程解：Ray、Hit record以及Scatter"></a>工程解：Ray、Hit record以及Scatter</h2><p>在这一节中，我们将引入Ray tracing weekend中的Ray、Hit record以及Scatter这三个设计。并且将他们与光栅化中的部分概念进行比较，分析他们的思路。</p>
 <h2 id="Lambert光照模型"><a href="#Lambert光照模型" class="headerlink" title="Lambert光照模型"></a>Lambert光照模型</h2><p>在这一节中，我们将介绍Lambert光照模型，并分析其与渲染方程之间的关系。</p>
-<h3 id="光栅化中的Lambert"><a href="#光栅化中的Lambert" class="headerlink" title="光栅化中的Lambert"></a>光栅化中的Lambert</h3><h3 id="Ray-tracing中的Lambert"><a href="#Ray-tracing中的Lambert" class="headerlink" title="Ray tracing中的Lambert"></a>Ray tracing中的Lambert</h3><h3 id="这比光栅化的Lambert模型简单多了，为什么？"><a href="#这比光栅化的Lambert模型简单多了，为什么？" class="headerlink" title="这比光栅化的Lambert模型简单多了，为什么？"></a>这比光栅化的Lambert模型简单多了，为什么？</h3><p>让我们再次回顾一下渲染方程（这次我们还是只关注后半部分）：</p>
+<h3 id="光栅化中的Lambert"><a href="#光栅化中的Lambert" class="headerlink" title="光栅化中的Lambert"></a>光栅化中的Lambert</h3><h3 id="Ray-tracing中的Lambert"><a href="#Ray-tracing中的Lambert" class="headerlink" title="Ray tracing中的Lambert"></a>Ray tracing中的Lambert</h3><h3 id="这比光栅化的Lambert模型简单多了，为什么？"><a href="#这比光栅化的Lambert模型简单多了，为什么？" class="headerlink" title="这比光栅化的Lambert模型简单多了，为什么？"></a>这比光栅化的Lambert模型简单多了，为什么？</h3><p>让我们再次回顾一下渲染方程<a href="#refer-anchor-1"><sup>1</sup></a>（这次我们还是只关注后半部分）：</p>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.24999999999999992em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><msub><mi>L</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>L</mi><mrow><mi>e</mi><mi>m</mi><mi>i</mi><mi>s</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>+</mo><msubsup><mo>∫</mo><mi mathvariant="normal">Ω</mi><mrow></mrow></msubsup><msub><mi>L</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mo>−</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>⋅</mo><mover accent="true"><mi>n</mi><mo>^</mo></mover><mo stretchy="false">)</mo><mi>d</mi><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
 
 L_{out}(x,\hat{\omega}_{out},\lambda) &amp;= L_{emis}(x,\hat{\omega}_{out},\lambda) \\&amp;+ \int_{\Omega}^{}L_{in}(x,\hat{\omega}_{in},\lambda)f(x,\hat{\omega}_{in},\hat{\omega}_{out},\lambda)(-\hat{\omega}_{in}\cdot\hat{n}) d\hat{\omega}_{in}
@@ -358,6 +359,11 @@ L_{out}(x,\hat{\omega}_{out},\lambda) &amp;= L_{emis}(x,\hat{\omega}_{out},\lamb
 
 <p>再加上我们在这个阶段简单认为光线是均匀吸收，均匀发散的，因此BRDF项我们也可以简单看成1，进而这个Lambert模型只需要考虑入射光即可。也就是：</p>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mover accent="true"><mi>ω</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L_{in}(x,\hat{\omega}_{in},\lambda)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span></span></span></span></span>
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><div id="refer-anchor-1"></div>
+1. Dunn F, Parberry I. 3D math primer for graphics and game development[M]. CRC Press, 2011.
+<div id="refer-anchor-2"></div>
+2. Shirley P. Ray tracing in one weekend[J]. Amazon Digital Services LLC, 2018, 1: 4.
 
         
       </div>
