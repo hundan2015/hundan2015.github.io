@@ -46,20 +46,20 @@ var _hmt = _hmt || [];
   <meta name="description" content="这两天在刷Leetcode的时候发现一个头痛的问题。经过学长提点，感觉算法十分有趣，因此记录一下。读者需要先简单了解一下单调栈的知识。 原题目Leetcode 42：接雨水  单调栈解法  首先我们看一下这张图。这里代表数据&amp;#123;5,4,1,2,4,6&amp;#125;。 那么通过单调栈来计算这个问题呢？我们可以看出来这里有几条规律：   在一个水坑中，水坑的高度取决于两个墙之间的最小值。 在水坑">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记录一个单调栈的问题：接雨水">
-<meta property="og:url" content="http://example.com/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/index.html">
+<meta property="og:url" content="http://hundan2015.github.io/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/index.html">
 <meta property="og:site_name" content="黄鸭数据库">
 <meta property="og:description" content="这两天在刷Leetcode的时候发现一个头痛的问题。经过学长提点，感觉算法十分有趣，因此记录一下。读者需要先简单了解一下单调栈的知识。 原题目Leetcode 42：接雨水  单调栈解法  首先我们看一下这张图。这里代表数据&amp;#123;5,4,1,2,4,6&amp;#125;。 那么通过单调栈来计算这个问题呢？我们可以看出来这里有几条规律：   在一个水坑中，水坑的高度取决于两个墙之间的最小值。 在水坑">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/adf.svg">
-<meta property="og:image" content="http://example.com/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/func1.svg">
-<meta property="og:image" content="http://example.com/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/func2.svg">
+<meta property="og:image" content="http://hundan2015.github.io/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/adf.svg">
+<meta property="og:image" content="http://hundan2015.github.io/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/func1.svg">
+<meta property="og:image" content="http://hundan2015.github.io/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/func2.svg">
 <meta property="article:published_time" content="2023-09-17T05:24:13.000Z">
 <meta property="article:modified_time" content="2023-09-18T02:33:06.712Z">
 <meta property="article:author" content="Symbolic">
 <meta property="article:tag" content="算法">
 <meta property="article:tag" content="Leetcode">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/adf.svg">
+<meta name="twitter:image" content="http://hundan2015.github.io/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/adf.svg">
   
     <link rel="alternate" href="/atom.xml" title="黄鸭数据库" type="application/atom+xml">
   
@@ -195,14 +195,14 @@ var _hmt = _hmt || [];
     <div class="widget">
       <h3 class="widget-title">分类</h3>
       <div class="category-box">
-            <a class="category-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">
-                对考试特攻
-                <div class="category-count">2</div>
-            </a>
-        
             <a class="category-link" href="/categories/%E6%97%A5%E5%B8%B8%E7%A2%8E%E7%A2%8E%E5%BF%B5/">
                 日常碎碎念
                 <div class="category-count">1</div>
+            </a>
+        
+            <a class="category-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">
+                对考试特攻
+                <div class="category-count">2</div>
             </a>
         
             <a class="category-link" href="/categories/%E5%8D%9A%E5%AE%A2%E7%BB%B4%E6%8A%A4%E4%B8%8E%E5%BC%80%E5%8F%91/">
@@ -210,13 +210,13 @@ var _hmt = _hmt || [];
                 <div class="category-count">1</div>
             </a>
         
-            <a class="category-link" href="/categories/Leetcode/">
-                Leetcode
+            <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">
+                计算机图形学
                 <div class="category-count">1</div>
             </a>
         
-            <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">
-                计算机图形学
+            <a class="category-link" href="/categories/Leetcode/">
+                Leetcode
                 <div class="category-count">1</div>
             </a>
         </div>
