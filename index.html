@@ -161,6 +161,11 @@
     <div class="widget">
       <h3 class="widget-title">分类</h3>
       <div class="category-box">
+            <a class="category-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">
+                对考试特攻
+                <div class="category-count">2</div>
+            </a>
+        
             <a class="category-link" href="/categories/%E6%97%A5%E5%B8%B8%E7%A2%8E%E7%A2%8E%E5%BF%B5/">
                 日常碎碎念
                 <div class="category-count">1</div>
@@ -204,7 +209,7 @@
       
         <a class="archive-link" href="/archives/2023/09 ">
           九月 2023 
-          <div class="archive-count">4 </div>
+          <div class="archive-count">6 </div>
         </a>
       
     </div>
@@ -217,6 +222,18 @@
     <div class="widget">
       <h3 class="widget-title">最新文章</h3>
       <ul>
+        
+          <a class="recent-link" href="/2023/09/18/DevC-%E4%B8%AD%E7%9A%84%E9%82%AA%E9%97%A8%E7%94%A8%E6%B3%95/" title="DevC++中的邪门用法" >
+            <div class="recent-link-text">
+              DevC++中的邪门用法
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/09/18/%E4%B8%80%E5%BC%A0%E5%9B%BE%E8%A7%A3%E9%87%8A%E5%82%BB%E9%80%BCprintf%E6%80%8E%E4%B9%88%E5%86%99/" title="一张图解释傻逼printf怎么写" >
+            <div class="recent-link-text">
+              一张图解释傻逼printf怎么写
+            </div>
+          </a>
         
           <a class="recent-link" href="/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/" title="记录一个单调栈的问题：接雨水" >
             <div class="recent-link-text">
@@ -236,12 +253,6 @@
             </div>
           </a>
         
-          <a class="recent-link" href="/2023/09/14/hello-world/" title="Hello World" >
-            <div class="recent-link-text">
-              Hello World
-            </div>
-          </a>
-        
       </ul>
     </div>
   </div>
@@ -252,6 +263,158 @@
     </div>
     <div id="content-body">
       
+   
+
+<article id="post-DevC-中的邪门用法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2023/09/18/DevC-%E4%B8%AD%E7%9A%84%E9%82%AA%E9%97%A8%E7%94%A8%E6%B3%95/">DevC++中的邪门用法</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-09-18T15:37:46.000Z" itemprop="datePublished">2023-09-18</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+  <a class="meta-cate-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">对考试特攻</a>
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            532 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            我真的好爱VSCode。但是在各种上机考试中没有VSCode，只有该死的DevC++。这个时候你就会发现调试、代码格式化、代码提示还有甚至查看容器是多么现代的特性。
+很可惜，这个傻逼DevC++统统没有，甚至默认不支持c++11。还好这个软件已经死了，但是它还是我们考试的好伙伴。这篇文章主要是总结一下如何更改DevC++的配置，让我们在考场上拉屎的效率高一点。
+
+踹开C++11的大门
+代码格式化
+查看连续容器
+写在结尾
+
+
+ 踹开C++11的大门
+C++11！现代CPP的大门！我们需要使用编译器参数把这个大门踹开。
+12工具-&gt;编译设置-std=c++11
+ 代码格式化
+最基本的功能。我VSCode中最长按的快捷键，没有之一。Shift+Alt+F，我永远的温柔乡。首先最重要的是就是把这个篮子快捷键改掉。
+工具-&gt;快捷键选项-&gt;MainMenu&gt;Astyle&gt;格式化当前文件
+因为这个东西用的是AStyle，默认的参数并不能满足我们对于括号与空格的需求。因此我们需要记住（背下来）几个好用的参数：
+--style=ansi -p -U -H
+顺便提一下，...  
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2023/09/18/DevC-%E4%B8%AD%E7%9A%84%E9%82%AA%E9%97%A8%E7%94%A8%E6%B3%95/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+ 
+
+   
+
+<article id="post-一张图解释傻逼printf怎么写" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2023/09/18/%E4%B8%80%E5%BC%A0%E5%9B%BE%E8%A7%A3%E9%87%8A%E5%82%BB%E9%80%BCprintf%E6%80%8E%E4%B9%88%E5%86%99/">一张图解释傻逼printf怎么写</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-09-18T03:31:06.000Z" itemprop="datePublished">2023-09-18</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+  <a class="meta-cate-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">对考试特攻</a>
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            87 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            最近写东西可能需要C语言，简直是折磨我一个C++人。尤其是里面的Printf问题，纯属给自己没事找事。cout怎么你了？fmt不香吗？我建议在2023年还在单C语言考试的学校立即解散。
+不多说，一张图我们把格式化解释清楚:
+
+  
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2023/09/18/%E4%B8%80%E5%BC%A0%E5%9B%BE%E8%A7%A3%E9%87%8A%E5%82%BB%E9%80%BCprintf%E6%80%8E%E4%B9%88%E5%86%99/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+ 
+
    
 
 <article id="post-记录一个单调栈的问题：接雨水" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">

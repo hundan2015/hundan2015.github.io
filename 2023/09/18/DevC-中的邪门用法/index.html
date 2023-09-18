@@ -14,18 +14,23 @@
   
 
   
-  <title>标签: CG | 黄鸭数据库</title>
+  <title>DevC++中的邪门用法 | 黄鸭数据库</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
   <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="黄鸭数据库">
-<meta property="og:url" content="http://example.com/tags/CG/index.html">
+  <meta name="description" content="我真的好爱VSCode。但是在各种上机考试中没有VSCode，只有该死的DevC++。这个时候你就会发现调试、代码格式化、代码提示还有甚至查看容器是多么现代的特性。 很可惜，这个傻逼DevC++统统没有，甚至默认不支持c++11。还好这个软件已经死了，但是它还是我们考试的好伙伴。这篇文章主要是总结一下如何更改DevC++的配置，让我们在考场上拉屎的效率高一点。  踹开C++11的大门 代码格式化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevC++中的邪门用法">
+<meta property="og:url" content="http://example.com/2023/09/18/DevC-%E4%B8%AD%E7%9A%84%E9%82%AA%E9%97%A8%E7%94%A8%E6%B3%95/index.html">
 <meta property="og:site_name" content="黄鸭数据库">
+<meta property="og:description" content="我真的好爱VSCode。但是在各种上机考试中没有VSCode，只有该死的DevC++。这个时候你就会发现调试、代码格式化、代码提示还有甚至查看容器是多么现代的特性。 很可惜，这个傻逼DevC++统统没有，甚至默认不支持c++11。还好这个软件已经死了，但是它还是我们考试的好伙伴。这篇文章主要是总结一下如何更改DevC++的配置，让我们在考场上拉屎的效率高一点。  踹开C++11的大门 代码格式化">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T15:37:46.000Z">
+<meta property="article:modified_time" content="2023-09-18T16:19:12.698Z">
 <meta property="article:author" content="Symbolic">
+<meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="黄鸭数据库" type="application/atom+xml">
@@ -264,44 +269,111 @@
     <div id="content-body">
        
 
-<div class="archive-main-card">
-    <div class="archive-top">
-      <div class="main-title-bar">
-        <div class="main-title-dot"></div>
-        <h1 class="article-title">归档</h1>
-      </div>    
+<article id="post-DevC-中的邪门用法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        DevC++中的邪门用法
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-09-18T15:37:46.000Z" itemprop="datePublished">2023-09-18</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+  <a class="meta-cate-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">对考试特攻</a>
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            532 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <p>我真的好爱VSCode。但是在各种上机考试中没有VSCode，只有该死的DevC++。这个时候你就会发现调试、代码格式化、代码提示还有甚至查看容器是多么现代的特性。</p>
+<p>很可惜，这个傻逼DevC++统统没有，甚至默认不支持c++11。还好这个软件已经死了，但是它还是我们考试的好伙伴。这篇文章主要是总结一下如何更改DevC++的配置，让我们在考场上拉屎的效率高一点。</p>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E8%B8%B9%E5%BC%80c11%E7%9A%84%E5%A4%A7%E9%97%A8">踹开C++11的大门</a></li>
+<li><a href="#%E4%BB%A3%E7%A0%81%E6%A0%BC%E5%BC%8F%E5%8C%96">代码格式化</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%9E%E7%BB%AD%E5%AE%B9%E5%99%A8">查看连续容器</a></li>
+<li><a href="#%E5%86%99%E5%9C%A8%E7%BB%93%E5%B0%BE">写在结尾</a></li>
+</ul>
+</p>
+<h2 id="踹开c11的大门"><a class="markdownIt-Anchor" href="#踹开c11的大门"></a> 踹开C++11的大门</h2>
+<p>C++11！现代CPP的大门！我们需要使用编译器参数把这个大门踹开。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">工具-&gt;编译设置</span><br><span class="line">-std=c++11</span><br></pre></td></tr></table></figure>
+<h2 id="代码格式化"><a class="markdownIt-Anchor" href="#代码格式化"></a> 代码格式化</h2>
+<p>最基本的功能。我VSCode中最长按的快捷键，没有之一。<code>Shift+Alt+F</code>，我永远的温柔乡。首先最重要的是就是把这个篮子快捷键改掉。</p>
+<p><code>工具-&gt;快捷键选项-&gt;MainMenu&gt;Astyle&gt;格式化当前文件</code></p>
+<p>因为这个东西用的是AStyle，默认的参数并不能满足我们对于括号与空格的需求。因此我们需要记住（背下来）几个好用的参数：</p>
+<p><code>--style=ansi -p -U -H</code></p>
+<p>顺便提一下，如果这个AStyle不好使了，有很大可能是权限的问题。 <strong>当你使用管理员身份使用DevC++之后就好了。</strong></p>
+<h2 id="查看连续容器"><a class="markdownIt-Anchor" href="#查看连续容器"></a> 查看连续容器</h2>
+<p>这B玩意看不了一点vector。这咋办？</p>
+<p>有大兄弟告诉我用取地址，然后查看元素的方法。其中@之后的数字代表查看多少个连续的元素。这样就可以勉强看看之后的元素都有啥了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="type">int</span>&gt; shit = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">*&amp;shit[<span class="number">0</span>]@<span class="number">4</span></span><br></pre></td></tr></table></figure>
+<h2 id="写在结尾"><a class="markdownIt-Anchor" href="#写在结尾"></a> 写在结尾</h2>
+<p>我真的太爱VSCode了。多么现代的东西啊！还好只要挺过这段时间我就可以再也不用这些傻逼软件进行一个题的写。但我相信依然还有很多狗屎学校在使用CodeBlocks，DevCPP这样的老古董。也希望这篇文章能救到这样的学生们</p>
+<p>最后，同志们，辛苦了。</p>
+
+        
+      </div>
+
+         
     </div>
     
-    
-      
-      
-        
-        <div class="year-line">
-            <div class="year-num">2023</div>
-            <div class="dot-wrapper">
-                <div class="dot"></div>
-            </div>
-            <div class="article-count">1 篇文章</div>
-        </div>
-      
-      <a class="archive-article-link" href="/2023/09/15/%E6%89%80%E4%BB%A5%E5%88%B0%E5%BA%95%E5%A6%82%E4%BD%95Ray-Tracing%EF%BC%9F/" title="所以到底如何Ray Tracing？">
-        <div class="date">09-15</div>
-        <div class="line">
-            <div class="dot"></div>
-        </div>
-        <div class="title">
-            <div class="title-inner">
-                
-                    所以到底如何Ray Tracing？
-                
-            </div>
-        </div>
-        <div class="tags">
-            #CG #C++
-        </div>
-      </a>
-    
+     
   </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2023/09/18/%E4%B8%80%E5%BC%A0%E5%9B%BE%E8%A7%A3%E9%87%8A%E5%82%BB%E9%80%BCprintf%E6%80%8E%E4%B9%88%E5%86%99/"
+      title="一张图解释傻逼printf怎么写"
+     >
+
+    <p class="title-text">
+      
+        一张图解释傻逼printf怎么写
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+ 
     </div>
     <div id="footer-wrapper">
       <footer id="footer">
