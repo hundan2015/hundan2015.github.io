@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="/fontawesome/css/fontawesome.css" rel="stylesheet">
+<link href="/fontawesome/css/brands.css" rel="stylesheet">
+<link href="/fontawesome/css/solid.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=true"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'true');
+</script>
+<!-- End Google Analytics -->
+
+  
+<!-- Global site tag (gtag.js) - Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?true";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- End Baidu Analytics -->
+
+  
+
+  
+  <title>从Cook-Torrance看Lambert到Blinn-phong，传统经验模型真的完全不合理吗？ | 黄鸭数据库</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="动机 最近出于各种原因，我在看一些经典的光照模型：Lambert、Phong还有Blinn-Phong。当然，经典的PBR渲染公式也不能忘记。什么微表面理论，菲涅尔项之类的。说到微表面模型，就不能忘记GGX。在GGX中有一个关键的计算，就是需要取一下视线向量和光线向量的加和，然后再取这个加和得到的向量与平面法线向量的夹角。很巧合的是，Blinn Phong模型作为一个经验模型也采用了一个类似的运">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从Cook-Torrance看Lambert到Blinn-phong，传统经验模型真的完全不合理吗？">
+<meta property="og:url" content="http://hundan2015.github.io/2023/10/25/%E4%BB%8ELambert%E5%88%B0Blinn-phong%E5%86%8D%E5%88%B0Cook-Torrance%EF%BC%8C%E4%BC%A0%E7%BB%9F%E7%BB%8F%E9%AA%8C%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%AE%8C%E5%85%A8%E4%B8%8D%E5%90%88%E7%90%86%E5%90%97%EF%BC%9F/index.html">
+<meta property="og:site_name" content="黄鸭数据库">
+<meta property="og:description" content="动机 最近出于各种原因，我在看一些经典的光照模型：Lambert、Phong还有Blinn-Phong。当然，经典的PBR渲染公式也不能忘记。什么微表面理论，菲涅尔项之类的。说到微表面模型，就不能忘记GGX。在GGX中有一个关键的计算，就是需要取一下视线向量和光线向量的加和，然后再取这个加和得到的向量与平面法线向量的夹角。很巧合的是，Blinn Phong模型作为一个经验模型也采用了一个类似的运">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-25T10:18:50.000Z">
+<meta property="article:modified_time" content="2023-10-26T04:32:28.642Z">
+<meta property="article:author" content="Symbolic">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="黄鸭数据库" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <meta name="google-site-verification" content="uWjEqnZGbQ8mYqZ72C78b5GjIfmfox1IpZtHF-goiMU" />
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/assets/banner.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="shadow   ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>黄鸭数据库 </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+      <a class="main-nav-link" href="/categories">Categories</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+      <a class="nav-dropdown-link" href="/categories">Categories</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+        <image src=/assets/avatar.jpg></image>
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">梧杉 </div>
+      <div class="dot"></div>
+      <div class="subtitle">给小黄鸭的教案 </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://twitter.com" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://store.steampowered.com" title="Steam"><i class="fa-brands fa-steam"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">分类</h3>
+      <div class="category-box">
+            <a class="category-link" href="/categories/%E5%AF%B9%E8%80%83%E8%AF%95%E7%89%B9%E6%94%BB/">
+                对考试特攻
+                <div class="category-count">2</div>
+            </a>
+        
+            <a class="category-link" href="/categories/%E6%97%A5%E5%B8%B8%E7%A2%8E%E7%A2%8E%E5%BF%B5/">
+                日常碎碎念
+                <div class="category-count">1</div>
+            </a>
+        
+            <a class="category-link" href="/categories/Leetcode/">
+                Leetcode
+                <div class="category-count">2</div>
+            </a>
+        
+            <a class="category-link" href="/categories/%E5%8D%9A%E5%AE%A2%E7%BB%B4%E6%8A%A4%E4%B8%8E%E5%BC%80%E5%8F%91/">
+                博客维护与开发
+                <div class="category-count">1</div>
+            </a>
+        
+            <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">
+                计算机图形学
+                <div class="category-count">1</div>
+            </a>
+        </div>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/CG/" rel="tag">CG</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Leetcode/" rel="tag">Leetcode</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%8A%80%E6%9C%AF/" rel="tag">网络技术</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">归档</h3>
+      
+      
+        <a class="archive-link" href="/archives/2023/10 ">
+          十月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/09 ">
+          九月 2023 
+          <div class="archive-count">7 </div>
+        </a>
+      
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">最新文章</h3>
+      <ul>
+        
+          <a class="recent-link" href="/2023/10/25/%E4%BB%8ELambert%E5%88%B0Blinn-phong%E5%86%8D%E5%88%B0Cook-Torrance%EF%BC%8C%E4%BC%A0%E7%BB%9F%E7%BB%8F%E9%AA%8C%E6%A8%A1%E5%9E%8B%E7%9C%9F%E7%9A%84%E5%AE%8C%E5%85%A8%E4%B8%8D%E5%90%88%E7%90%86%E5%90%97%EF%BC%9F/" title="从Cook-Torrance看Lambert到Blinn-phong，传统经验模型真的完全不合理吗？" >
+            <div class="recent-link-text">
+              从Cook-Torrance看Lambert到Blinn-phong，传统经验模型真的完全不合理吗？
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/09/19/%E5%9C%A8%E5%81%9ALeetCode%E7%9A%84%E6%97%B6%E5%80%99%E7%9A%84%E9%9B%B6%E6%95%A3%E5%B7%A7%E6%80%9D/" title="在做LeetCode的时候的零散巧思" >
+            <div class="recent-link-text">
+              在做LeetCode的时候的零散巧思
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/09/18/DevC-%E4%B8%AD%E7%9A%84%E9%82%AA%E9%97%A8%E7%94%A8%E6%B3%95/" title="DevC++中的邪门用法" >
+            <div class="recent-link-text">
+              DevC++中的邪门用法
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/09/18/%E4%B8%80%E5%BC%A0%E5%9B%BE%E8%A7%A3%E9%87%8A%E5%82%BB%E9%80%BCprintf%E6%80%8E%E4%B9%88%E5%86%99/" title="一张图解释傻逼printf怎么写" >
+            <div class="recent-link-text">
+              一张图解释傻逼printf怎么写
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/09/17/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%AA%E5%8D%95%E8%B0%83%E6%A0%88%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%E6%8E%A5%E9%9B%A8%E6%B0%B4/" title="记录一个单调栈的问题：接雨水" >
+            <div class="recent-link-text">
+              记录一个单调栈的问题：接雨水
+            </div>
+          </a>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+<article id="post-从Lambert到Blinn-phong再到Cook-Torrance，传统经验模型真的完全不合理吗？" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        从Cook-Torrance看Lambert到Blinn-phong，传统经验模型真的完全不合理吗？
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-10-25T10:18:50.000Z" itemprop="datePublished">2023-10-25</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            1.9k 词 
+          </div>
+        </div>
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CG/" rel="tag">CG</a></li></ul>
+
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h2 id="动机"><a class="markdownIt-Anchor" href="#动机"></a> 动机</h2>
+<p>最近出于各种原因，我在看一些经典的光照模型：Lambert、Phong还有Blinn-Phong。当然，经典的PBR渲染公式也不能忘记。什么微表面理论，菲涅尔项之类的。说到微表面模型，就不能忘记GGX。在GGX中有一个关键的计算，就是需要取一下视线向量和光线向量的加和，然后再取这个加和得到的向量与平面法线向量的夹角。很巧合的是，Blinn Phong模型作为一个经验模型也采用了一个类似的运算。那么这里有什么关系呢？我自己尝试使用微表面理论进行解释，一点问题都没有。我就在想，用一个所谓未来理论的假说解释一个过去古老的经验模型，是否有些不妥。我便拿来了原来提出Blinn Phong模型的论文，才发现倒错的是我。Cook-Torrance模型早于Blinn Phong模型，并且Blinn Phong模型的合理性就是由Cook-Torrance模型进行解释。这种反差让我感受到了一种时代的错位感，就像是你发现并不是先有谭浩强后有C++一样离谱。但是有没有可能只是我们忘记了历史，忘记了计算机图形学的发展脉络呢？我认为，<strong>伟人们早在他们的时代便提出了超前的构思，而又陷于时代只能假设一些经验前提来简化计算，进而有了当时所谓的经验模型。</strong> 因此我便想通过这篇文章，从历史的角度，揣度或重现过去学者对于光照模型的构思，并从此窥见光照模型发展的脉络。</p>
+<h2 id="研究的入手点与方法"><a class="markdownIt-Anchor" href="#研究的入手点与方法"></a> 研究的入手点与方法</h2>
+<p>本篇文章主要集中于Lambert、Phong以及Blinn-Phong三个经典经验模型，涉及到微表面理论，以及部分辐射度量学。Blinn-Phong的原论文非常精彩，甚至十分超前。在本篇文章内，我们从1986年的渲染方程理论入手，结合辐射度量学，对比当时他们提出的理论与后来渲染方程之间的关系，探究这三个模型做出的经验性假设。</p>
+<h2 id="相关工作"><a class="markdownIt-Anchor" href="#相关工作"></a> 相关工作</h2>
+<h3 id="微表面模型"><a class="markdownIt-Anchor" href="#微表面模型"></a> 微表面模型</h3>
+<h3 id="简单能量守恒"><a class="markdownIt-Anchor" href="#简单能量守恒"></a> 简单能量守恒</h3>
+<p>对于受到辐射的物体，辐射本身的能量被分为了两部分。一部分被物体吸收，然后通过光线在物体中的碰撞再以某种形式散发出来，这种形式可能是光能或者热能。还有部分的能量被物体表面反射，进入到我们的人眼中。对于这两个不同的能量部分，我们将反射到我们眼中的光称为Specular，也就是镜面反射光。经过物体内部折射然后从物体内部发出的光称为Diffuse，也就是漫反射光。</p>
+<h3 id="渲染方程"><a class="markdownIt-Anchor" href="#渲染方程"></a> 渲染方程</h3>
+<p>渲染方程如下所示：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mi>o</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>L</mi><mi>e</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mo>+</mo><msub><mi>L</mi><mi>r</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mspace linebreak="newline"></mspace><msub><mi>L</mi><mi>r</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>∫</mo><mi mathvariant="normal">Ω</mi></msub><msub><mi>f</mi><mi>r</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>λ</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">⋅</mo><mi>n</mi><mo stretchy="false">)</mo><mi mathvariant="normal">d</mi><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">L_o(x,\omega_o,\lambda)=L_e(x,\omega_o,\lambda)+L_r(x,\omega_o,\lambda)\\
+L_r(x,\omega_o,\lambda) = \int_\Omega f_r(x,\omega_i,\omega_o,\lambda)L_i(x,\omega_i,\lambda)(\omega_i ·n) \mathrm{d}\omega_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.27195em;vertical-align:-0.9119499999999999em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011249999999999316em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.433619em;"><span style="top:-1.7880500000000001em;margin-left:-0.44445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">Ω</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9119499999999999em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mord"><span class="mord mathrm">d</span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>在其中，几个符号这么解释：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">x</span></span></span></span>为被光照射或者被观察到的点；</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">λ</span></span></span></span>为光的波长；</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\omega_o</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为观察者眼睛到被观察点的向量；<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\omega_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>为入射光打在被观察点的向量。</li>
+</ul>
+<p>方程整体上这个又分成了两个部分：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>e</mi></msub></mrow><annotation encoding="application/x-tex">L_e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>和<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">L_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>e</mi></msub></mrow><annotation encoding="application/x-tex">L_e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">e</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>对应着能量守恒理论中的漫反射以及物体自发光的部分；</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">L_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>则对应着能量守恒中的镜面反射部分。</li>
+</ul>
+<p>在<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">L_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>的部分，又有三个大块：</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">f_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表着一个物体的BRDF，也就是双向反射分布函数。他代表着通过镜面反射从<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\omega_o</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>方向射出的光线相对于从<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\omega_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>方向射向点<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">x</span></span></span></span>的，波长为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">λ</span></span></span></span>的光线所含能量的倍数。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">L_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>则代表着从<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\omega_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>射向<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">x</span></span></span></span>点的波长为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">λ</span></span></span></span>的光线所含能量大小。</li>
+<li>最后<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">⋅</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\omega_i ·n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>为Lambert系数项。因为光线与观察面优势并不是垂直的，观察面所接受的irradiance需要通过光线与法线的夹角的余弦值来进行修正。</li>
+</ul>
+<h3 id="cook-torrance模型"><a class="markdownIt-Anchor" href="#cook-torrance模型"></a> Cook-Torrance模型</h3>
+<p>Torrance模型通过一个假设理论来描述渲染方程的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">f_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>项。其表达大致如下所示：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>f</mi><mrow><mi>C</mi><mi>o</mi><mi>o</mi><mi>k</mi><mo>−</mo><mi>T</mi><mi>o</mi><mi>r</mi><mi>r</mi><mi>a</mi><mi>n</mi><mi>c</mi><mi>e</mi></mrow></msub><mo>=</mo><mfrac><mrow><mi>D</mi><mi>F</mi><mi>G</mi></mrow><mrow><mn>4</mn><mo stretchy="false">(</mo><msub><mi>ω</mi><mi>o</mi></msub><mo separator="true">⋅</mo><mi>n</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><msub><mi>ω</mi><mi>i</mi></msub><mo separator="true">⋅</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">f_{Cook-Torrance}=\frac{DFG}{4(\omega_o ·n)(\omega_i ·n)}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.902771em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.29633em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">o</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord mathnormal">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>对于模型来说，主要分成3个部分：</p>
+<ul>
+<li>D：每单位面积,每单位立体角所有法向为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">h</span></span></span></span>的微平面的面积</li>
+<li>F：描述了物体表面在不同入射光角度下反射光线所占的比率</li>
+<li>G：描述了微平面自遮挡的属性。</li>
+</ul>
+<p>但下面的参数究竟是怎么来的？这里涉及到一些辐射度量学和数学知识，建议参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/152226698">这篇文章</a>进行推导。从结果来看，下面的参数是我们针对D项做的一些修正。</p>
+<h2 id="从现代角度对传统光照模型的分析"><a class="markdownIt-Anchor" href="#从现代角度对传统光照模型的分析"></a> 从现代角度对传统光照模型的分析</h2>
+<h3 id="lambert"><a class="markdownIt-Anchor" href="#lambert"></a> Lambert</h3>
+<p>Lambert模型算是十分古老的模型，也是最简单的光照模型。Lambert模型发现了一个基本的要素：法线面向光源的面越亮，法线越垂直于光源的面越暗。这个亮度和<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>s</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">cos\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">c</span><span class="mord mathnormal">o</span><span class="mord mathnormal">s</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>相关。</p>
+<p>我们从辐射度量学的角度来看这件事。对于一个单位面积上的单位立体角<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">d</mi><mi>A</mi><mi mathvariant="bold">d</mi><msub><mi>ω</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{d}A\mathbf{d}\omega_h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">d</span></span><span class="mord mathnormal">A</span><span class="mord"><span class="mord mathbf">d</span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">h</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，根据radiance的定义<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><msup><mi mathvariant="bold">d</mi><mn>2</mn></msup><mi>ϕ</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>s</mi><mi>θ</mi><mi mathvariant="bold">d</mi><mi>ω</mi><mi mathvariant="bold">d</mi><mi>A</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{\mathbf{d}^2\phi}{cos\theta\mathbf{d}\omega\mathbf{d}A}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.415028em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.070028em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span><span class="mord mtight"><span class="mord mathbf mtight">d</span></span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">ω</span><span class="mord mtight"><span class="mord mathbf mtight">d</span></span><span class="mord mathnormal mtight">A</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.446108em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathbf mtight">d</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913142857142857em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord mathnormal mtight">ϕ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>得知，当前表面的Irradiance为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>i</mi></msub><mi>c</mi><mi>o</mi><mi>s</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">L_i  cos\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">c</span><span class="mord mathnormal">o</span><span class="mord mathnormal">s</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>为法线与光照方向的夹角。通过辐射度量学，我们解释了了为什么光照不是线性变化的，而是使用<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>s</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">cos\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">c</span><span class="mord mathnormal">o</span><span class="mord mathnormal">s</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>描述。</p>
+<p>我们将Lambert模型的表达带回到渲染方程中，可以很轻易地计算出Lambert模型对应的BRDF为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mi>c</mi><mi>π</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{c}{\pi}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.040392em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.695392em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> <sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，其中c为物体自带的固有色。也就是说Lambert模型基于以下的事实与假设：</p>
+<p>现象：</p>
+<blockquote>
+<ul>
+<li>法线面向光源的面越亮，法线越垂直于光源的面越暗。</li>
+</ul>
+</blockquote>
+<p>事实：</p>
+<blockquote>
+<ul>
+<li>根据辐射度量学，一个面上接受的能量与光线与表面法线夹角的余弦成正比。</li>
+</ul>
+</blockquote>
+<p>假设：</p>
+<blockquote>
+<ul>
+<li>从表面上向任意方向反射的光的强度是均匀的。</li>
+</ul>
+</blockquote>
+<p>这十分的有趣。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>s</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">cos\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">c</span><span class="mord mathnormal">o</span><span class="mord mathnormal">s</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>的出现说明当时的学者已经意识到辐射度量学对于CG的意义，并基于这个理论构建模型。最简单的实现版本是直接使用余弦来计算亮度，而这样会使得物体放出的能量比它接收要多。不过我们同样可以通过辐射度量学，使用一个线性系数<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>π</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{\pi}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.190108em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>让其变得能量守恒。虽然这个世界上不存在均匀向四周反射光线的物体，但这种假设也依然符合我们对于漫反射物体的认知。</p>
+<h3 id="phong与blinn-phong"><a class="markdownIt-Anchor" href="#phong与blinn-phong"></a> Phong与Blinn-Phong</h3>
+<p>Phong与Blinn-Phong是相较于Lambert模型更良好的模型，但在很多资料上并没有证明为什么他们，尤其是Blinn-Phong相较于Lambert更好。 也许是因为这个原因，通常他们被认为是经验上的改进。但其实从Blinn-Phong的原论文来看，Blinn-Phong模型已经运用上了微表面理论与初级的Torrance模型。</p>
+<h2 id="注释与引用"><a class="markdownIt-Anchor" href="#注释与引用"></a> 注释与引用</h2>
+<hr class="footnotes-sep" />
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>这里我们为了能量守恒，除以一个<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi></mrow><annotation encoding="application/x-tex">\pi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span></span></span></span>。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2023/09/19/%E5%9C%A8%E5%81%9ALeetCode%E7%9A%84%E6%97%B6%E5%80%99%E7%9A%84%E9%9B%B6%E6%95%A3%E5%B7%A7%E6%80%9D/"
+      title="在做LeetCode的时候的零散巧思"
+     >
+
+    <p class="title-text">
+      
+        在做LeetCode的时候的零散巧思
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+ 
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2023 梧杉<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
