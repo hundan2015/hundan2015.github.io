@@ -51,7 +51,7 @@ var _hmt = _hmt || [];
 <meta property="og:description" content="动机 最近出于各种原因，我在看一些经典的光照模型：Lambert、Phong还有Blinn-Phong。当然，经典的PBR渲染公式也不能忘记。什么微表面理论，菲涅尔项之类的。说到微表面模型，就不能忘记GGX。在GGX中有一个关键的计算，就是需要取一下视线向量和光线向量的加和，然后再取这个加和得到的向量与平面法线向量的夹角。很巧合的是，Blinn Phong模型作为一个经验模型也采用了一个类似的运">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-25T10:18:50.000Z">
-<meta property="article:modified_time" content="2023-10-26T05:33:44.505Z">
+<meta property="article:modified_time" content="2023-10-29T13:00:47.499Z">
 <meta property="article:author" content="Symbolic">
 <meta property="article:tag" content="CG">
 <meta name="twitter:card" content="summary">
@@ -330,7 +330,7 @@ var _hmt = _hmt || [];
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            2.2k 词 
+            3.2k 词 
           </div>
         </div>
         
@@ -358,6 +358,7 @@ var _hmt = _hmt || [];
 <li><a href="#phong%E4%B8%8Eblinn-phong">Phong与Blinn-Phong</a></li>
 </ul>
 </li>
+<li><a href="#%E5%86%99%E5%9C%A8%E5%90%8E%E9%9D%A2">写在后面</a></li>
 <li><a href="#%E6%B3%A8%E9%87%8A%E4%B8%8E%E5%BC%95%E7%94%A8">注释与引用</a></li>
 </ul>
 </p>
@@ -428,6 +429,60 @@ L_r(x,\omega_o,\lambda) = \int_\Omega f_r(x,\omega_i,\omega_o,\lambda)L_i(x,\ome
 <h3 id="phong与blinn-phong"><a class="markdownIt-Anchor" href="#phong与blinn-phong"></a> Phong与Blinn-Phong</h3>
 <p>Phong与Blinn-Phong模型观察到了一个现象：比较光滑的漫反射物体在表面法线与光线方向几乎相同的位置具有高光。</p>
 <p>Phong与Blinn-Phong是相较于Lambert模型更良好的模型，但在很多资料上并没有证明为什么他们为什么更好，尤其是Blinn-Phong相较于Phong。也许是因为这个原因，通常这三个模型的发展过程被认为是经验上的改进。但其实从Blinn-Phong的原论文来看，Blinn-Phong模型已经运用上了微表面理论与初级的Torrance模型。因此我们需要从现象、理论以及假设三个角度重现Blinn-Phong模型的推导，然后从理论的角度分析为什么它更好。</p>
+<p>Lambert模型虽然对于漫反射物体有着直观的模拟，但是它不能很好地拟合塑料上的高光。Phong模型的提出就是为了解决这个问题。我们来看看他们怎么构建Phong模型的。</p>
+<blockquote>
+<p><strong>现象</strong>：</p>
+<ul>
+<li>法线面向光源的面越亮，法线越垂直于光源的面越暗。</li>
+<li>法线靠近光源的面具有光泽</li>
+<li>只有一小部分面有高光，远离光源的面几乎没有高光</li>
+</ul>
+<p><strong>理论：</strong></p>
+<ul>
+<li>辐射度量学
+<ul>
+<li>一个面上接受的能量与光线与表面法线夹角的余弦成正比。</li>
+</ul>
+</li>
+</ul>
+<p><strong>假设：</strong></p>
+<ul>
+<li>从表面上向任意方向反射的光的强度是均匀的。</li>
+<li>法线与光源的夹角越小，面越亮。</li>
+</ul>
+</blockquote>
+<p>基于这个假设，Phong模型首先计算了光照的直接反射方向。然后求这个方向与视线向量构成的角的余弦值。为了模拟远离光线的面没有高光的效果，Phong模型将余弦值进行幂运算，进而获得了一个凹函数，且在前半部分的斜率绝对值十分大。</p>
+<p>虽然只是需要多存储一个反射之后的夹角，这种计算方式还是挺麻烦的。通过引入微表面理论，Blinn提出了一个更简便，且更加正确的算法。</p>
+<blockquote>
+<p><strong>现象</strong>：</p>
+<ul>
+<li>法线面向光源的面越亮，法线越垂直于光源的面越暗。</li>
+<li>法线靠近光源的面具有光泽</li>
+<li>只有一小部分面有高光，远离光源的面几乎没有高光</li>
+</ul>
+<p><strong>理论：</strong></p>
+<ul>
+<li>辐射度量学
+<ul>
+<li>一个面上接受的能量与光线与表面法线夹角的余弦成正比。</li>
+</ul>
+</li>
+<li>微表面模型
+<ul>
+<li>对于一个宏表面，设光源放行与视线向量加和的方向为h，其中只有法线方向与h相同的微表面才反射光。</li>
+</ul>
+</li>
+</ul>
+<p><strong>假设：</strong></p>
+<ul>
+<li>从表面上向任意方向反射的光的强度是均匀的。</li>
+<li>法线与h的夹角越小，面越亮。</li>
+</ul>
+</blockquote>
+<p>通过对于微表面理论的使用，可以看出，Blinn在改进Phong模型的时候是完全符合理论的。虽然最后也是需要使用一个幂函数来构建凹函数，但是这种情况也更加合理。</p>
+<p>不可思议的是，在当时Blinn就在相关的论文中提供了Torrance模型视角的解释。而且提供了与现代游戏引擎中普遍使用的D函数。这个D函数更加容易计算，且更加准确。Blinn-Phong模型的提出，我更多认为是在Phong这个主流的框架下的一种改进。这个改进对于大众更好接受且效率更好，进而从这篇论文中被抽离出来。对于这篇文章更精彩的部分应该是在后面关于Torrance模型与为微表面模型的理论证明。如果感兴趣请务必看看这篇论文。</p>
+<h2 id="写在后面"><a class="markdownIt-Anchor" href="#写在后面"></a> 写在后面</h2>
+<p>原本这篇文章就是火花一现，我以为我离CG历史更近了一步。本来我想通过研究历史来看清未来的发展方向，但通过资料的查找发现自己只能止步于此。我们如今活在1980年代科技爆炸的余波中，现有的新理论并没有突破当时的框架。这令人感到绝望，因为我知道自己不是创造爆炸的人，只能期待伟人的出现并在这之前以框架上的残肉勉强度日。但我也觉得不应如此消沉，毕竟我的目的也便是希望能找到能创造更好方法的方法。这次尝试虽然失败了，但也应该保持好奇与探索，保持归纳总结与抽象。希望未来的我能更加强力。</p>
 <h2 id="注释与引用"><a class="markdownIt-Anchor" href="#注释与引用"></a> 注释与引用</h2>
 <hr class="footnotes-sep" />
 <section class="footnotes">
